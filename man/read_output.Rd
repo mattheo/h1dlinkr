@@ -4,11 +4,17 @@
 \alias{read_output}
 \alias{read_output}
 \alias{read_t_level}
+\alias{read_nod_inf}
+\alias{read_obs_node}
 \title{Read from HYDRUS-1D output files}
 \usage{
-read_output(file_path, skip)
+read_output(file_path, skip = 0)
 
 read_t_level(path)
+
+read_nod_inf(path)
+
+read_obs_node(path, skip = 11)
 }
 \arguments{
 \item{file_path}{Path to *.out file}
@@ -18,9 +24,19 @@ read_t_level(path)
 \item{path}{Path to Output directory}
 
 \item{skip}{Skip number of lines on input}
+
+\item{path}{Path to Output directory}
+
+\item{path}{Path to Output directory}
+
+\item{skip}{Skip number of lines on input}
 }
 \value{
 data.frame
+
+data.frame
+
+list of data.frames
 
 data.frame
 }
