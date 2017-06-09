@@ -64,6 +64,15 @@ Source: CRAN
 Version: 1.17.1
 Hash: 97cb6f6293cd18d17df77a6383cc6763
 
+Package: callr
+Source: github
+Version: 1.0.0.9000
+Hash: cdc4353aec02c0d42682df817c840af3
+GithubRepo: callr
+GithubUsername: r-pkgs
+GithubRef: HEAD
+GithubSha1: 7c65427ac466f91f09202774eb3e643bc79cbf79
+
 Package: cellranger
 Source: CRAN
 Version: 1.1.0
@@ -100,9 +109,13 @@ Version: 1.1.0
 Hash: 346d3477f87b89692dd1379eaed1a1be
 
 Package: devtools
-Source: CRAN
-Version: 1.13.1
-Hash: 8dadb6c6a916c8312dddc7b4d394c9f3
+Source: github
+Version: 1.13.1.9000
+Hash: ed49ce8a9f2990c052e51e0a6e027680
+GithubRepo: devtools
+GithubUsername: hadley
+GithubRef: master
+GithubSha1: c4099b3bc3f2b8cf78810c5e5395841dbefbf55b
 
 Package: dichromat
 Source: CRAN
@@ -176,8 +189,8 @@ Hash: 7de1f8f760441881804af7c1ff324340
 
 Package: jsonlite
 Source: CRAN
-Version: 1.4
-Hash: 24cc0ffeb1771d710173d9803a131870
+Version: 1.5
+Hash: 9c51936d8dd00b2f1d4fe9d10499694c
 
 Package: knitr
 Source: CRAN
@@ -248,6 +261,24 @@ GithubUsername: rstudio
 GithubRef: master
 GithubSha1: 51c4b8dd8aca83d0ba44a1ad77a19b4e01d32e58
 
+Package: pkgbuild
+Source: github
+Version: 0.0.0.9000
+Hash: 0240738ba54f63281313d51faee40fc2
+GithubRepo: pkgbuild
+GithubUsername: r-pkgs
+GithubRef: master
+GithubSha1: 8aab60b03bb09212881e3544e332d60defc52fd6
+
+Package: pkgload
+Source: github
+Version: 0.0.0.9000
+Hash: 8dbbe64b0174aa71740459bed47680f4
+GithubRepo: pkgload
+GithubUsername: r-pkgs
+GithubRef: master
+GithubSha1: 119cf9a667abc97c6f4a19148ce7b324e8de676d
+
 Package: plyr
 Source: CRAN
 Version: 1.8.4
@@ -257,6 +288,15 @@ Package: praise
 Source: CRAN
 Version: 1.0.0
 Hash: 77da8f1df873a4b91e5c4a68fe2fb1b6
+
+Package: processx
+Source: github
+Version: 2.0.1
+Hash: 9937f80300dac8b92676eeb512e058e1
+GithubRepo: processx
+GithubUsername: r-pkgs
+GithubRef: master
+GithubSha1: 88e7761c16b52674a6a5a81cd45ce880f70af327
 
 Package: psych
 Source: CRAN
@@ -289,9 +329,13 @@ Version: 1.4.2
 Hash: 01fa9a6b3ead377e4fac84af9f982df9
 
 Package: rlang
-Source: CRAN
-Version: 0.1.1
-Hash: 86c53487ce7f82f0a7cc11c816060910
+Source: github
+Version: 0.1.1.9000
+Hash: 6168dedcf8198845025cf7e356d883e8
+GithubRepo: rlang
+GithubUsername: hadley
+GithubRef: master
+GithubSha1: 7f53e56a5cc429cf6f784937cb90a2580512c85d
 
 Package: rmarkdown
 Source: CRAN
