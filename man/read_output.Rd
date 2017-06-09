@@ -14,7 +14,7 @@ read_t_level(path)
 
 read_nod_inf(path)
 
-read_obs_node(path, skip = 11)
+read_obs_node(path, header = 11)
 }
 \arguments{
 \item{file_path}{Path to *.out file}
@@ -23,13 +23,13 @@ read_obs_node(path, skip = 11)
 
 \item{path}{Path to Output directory}
 
+\item{header}{Number of lines with header information before the actual data}
+
 \item{skip}{Skip number of lines on input}
 
 \item{path}{Path to Output directory}
 
 \item{path}{Path to Output directory}
-
-\item{skip}{Skip number of lines on input}
 }
 \value{
 data.frame

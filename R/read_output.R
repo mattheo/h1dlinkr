@@ -60,8 +60,8 @@ read_nod_inf <- function(path) {
     str_extract("[0-9]+\\.?[0-9]*") %>%
     as.double()
 
-  skip <- grep(pattern, nod_inf_lines) + 5
-  n_max <- grep("^end", nod_inf_lines) - skip - 1
+  skip <- str_which(nod_inf_lines, pattern) + 5
+  n_max <- str_which(nod_inf_lines, "^end") - skip - 1
 
   block_list <- list()
   for (i in seq_along(skip)) {
@@ -80,22 +80,36 @@ read_nod_inf <- function(path) {
 
 #' @param path
 #' Path to Output directory
-#' @param skip
-#' Skip number of lines on input
+#' @param header
+#' Number of lines with header information before the actual data
 #'
 #' @return data.frame
 #' @export
 #' @rdname read_output
-read_obs_node <- function(path, skip = 11) {
+read_obs_node <- function(path, header = 11) {
   file_path <- file.path(path, "Obs_Node.out")
-  obs_node_lines <- readr::read_lines(file_path, n_max = skip)
-  col_names <- extr_col_names(obs_node_lines[skip])
+  obs_node_header <- readr::read_lines(file_path, n_max = header)
+  col_names <-
+    str_subset(obs_node_header, "^[ ]*time") %>%
+    extr_col_names() %>%
+    unique()
 
   nodes <-
-    str_extract_all(obs_node_lines[skip - 2], "[0-9]+", simplify = TRUE) %>% # two or more numericals
+    str_subset(obs_node_header, pattern = "Node") %>%
+    str_extract_all(pattern = "[0-9]+", simplify = TRUE) %>%
     as.integer()
 
-  columns <- readr::fwf_empty(file_path, skip = skip, col_names = col_names)
-  parms <- (length(col_names) - 1) / length(nodes)
+  par_per_node <- length(col_names)
 
+  data <-
+    readr::read_table(
+      file = file_path,
+      skip = header,
+      col_names = FALSE,
+      col_types = readr::cols(.default = "d")
+    )
+
+  node <- data[1:par_per_node]
+  colnames(node) <- col_names
+  node["node"] <- nodes[1]
 }
