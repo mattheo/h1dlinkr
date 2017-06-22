@@ -2,38 +2,25 @@
 % Please edit documentation in R/read_output.R
 \name{read_output}
 \alias{read_output}
-\alias{read_output}
 \alias{read_t_level}
 \alias{read_nod_inf}
 \alias{read_obs_node}
 \title{Read from HYDRUS-1D output files}
 \usage{
-read_output(file_path, skip = 0)
-
-read_t_level(path)
+read_t_level(path, skip = 6)
 
 read_nod_inf(path)
 
 read_obs_node(path, header = 11)
 }
 \arguments{
-\item{file_path}{Path to *.out file}
+\item{path}{Path to Output directory}
 
 \item{skip}{skip number of lines on input}
 
-\item{path}{Path to Output directory}
-
 \item{header}{Number of lines with header information before the actual data}
-
-\item{skip}{Skip number of lines on input}
-
-\item{path}{Path to Output directory}
-
-\item{path}{Path to Output directory}
 }
 \value{
-data.frame
-
 data.frame
 
 list of data.frames

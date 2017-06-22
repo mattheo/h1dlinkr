@@ -2,7 +2,6 @@
 
 export(read_nod_inf)
 export(read_obs_node)
-export(read_output)
 export(read_t_level)
 import(magrittr)
 import(stringr)

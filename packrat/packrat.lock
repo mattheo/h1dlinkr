@@ -16,8 +16,8 @@ Hash: 4aef5bda70897c1663d5b8bae2f4419a
 
 Package: R6
 Source: CRAN
-Version: 2.2.1
-Hash: 530f0b839551f96ec991ce4f93156ee1
+Version: 2.2.2
+Hash: b2366cd9d2f3851a5704b4e192b985c2
 
 Package: RColorBrewer
 Source: CRAN
@@ -43,6 +43,16 @@ Package: base64enc
 Source: CRAN
 Version: 0.1-3
 Hash: c590d29e555926af053055e23ee79efb
+
+Package: bindr
+Source: CRAN
+Version: 0.1
+Hash: e3a02070cf705d3ad1c5af1635a515a3
+
+Package: bindrcpp
+Source: CRAN
+Version: 0.1
+Hash: 11b0937a09c0eae22da142702c7cf1e9
 
 Package: bitops
 Source: CRAN
@@ -109,13 +119,9 @@ Version: 1.1.0
 Hash: 346d3477f87b89692dd1379eaed1a1be
 
 Package: devtools
-Source: github
-Version: 1.13.1.9000
-Hash: ed49ce8a9f2990c052e51e0a6e027680
-GithubRepo: devtools
-GithubUsername: hadley
-GithubRef: master
-GithubSha1: c4099b3bc3f2b8cf78810c5e5395841dbefbf55b
+Source: CRAN
+Version: 1.13.2
+Hash: 1bcfefa7d2fad3f1a2f5367c9ceccd46
 
 Package: dichromat
 Source: CRAN
@@ -129,8 +135,8 @@ Hash: e53fb8c58673df868183697e39a6a4d6
 
 Package: dplyr
 Source: CRAN
-Version: 0.5.0
-Hash: 09fc57f582c74ffa20a57e0a48b27150
+Version: 0.7.0
+Hash: cc5586f018f942d4c85f3be9b112563d
 
 Package: evaluate
 Source: CRAN
@@ -147,6 +153,11 @@ Source: CRAN
 Version: 1.5
 Hash: 258cf79a8dbeedf1c981cdb53837d2af
 
+Package: future
+Source: CRAN
+Version: 1.5.0
+Hash: 09b2f28908cab2a509741db486749a2c
+
 Package: ggplot2
 Source: CRAN
 Version: 2.2.1
@@ -156,6 +167,16 @@ Package: git2r
 Source: CRAN
 Version: 0.18.0
 Hash: 9dfaafbcca68be29b89ef7783dc1dac0
+
+Package: globals
+Source: CRAN
+Version: 0.10.0
+Hash: 4fb9da27e782921bb175dc2ad3c98679
+
+Package: glue
+Source: CRAN
+Version: 1.1.0
+Hash: 60734a419552f14d9c8246307ccb26bd
 
 Package: gtable
 Source: CRAN
@@ -207,6 +228,11 @@ Source: CRAN
 Version: 0.2.0
 Hash: 3d6e7608e65bbf5cb170dab1e3c9ed8b
 
+Package: listenv
+Source: CRAN
+Version: 0.6.0
+Hash: fd36525dac9e5596ef644242a7845c3d
+
 Package: lubridate
 Source: CRAN
 Version: 1.6.0
@@ -226,6 +252,11 @@ Package: memoise
 Source: CRAN
 Version: 1.1.0
 Hash: 410fcd334bc626db100237cc1370f2e9
+
+Package: microbenchmark
+Source: CRAN
+Version: 1.4-2.1
+Hash: 848513312615c5865b44037f84759690
 
 Package: mime
 Source: CRAN
@@ -270,6 +301,11 @@ GithubUsername: r-pkgs
 GithubRef: master
 GithubSha1: 8aab60b03bb09212881e3544e332d60defc52fd6
 
+Package: pkgconfig
+Source: CRAN
+Version: 2.0.1
+Hash: 0dda4a2654a22b36a715c2b0b6fbacac
+
 Package: pkgload
 Source: github
 Version: 0.0.0.9000
@@ -278,6 +314,11 @@ GithubRepo: pkgload
 GithubUsername: r-pkgs
 GithubRef: master
 GithubSha1: 119cf9a667abc97c6f4a19148ce7b324e8de676d
+
+Package: plogr
+Source: CRAN
+Version: 0.1-1
+Hash: fb19215402e2d9f1c7f803dcaa806fc2
 
 Package: plyr
 Source: CRAN
@@ -339,8 +380,8 @@ GithubSha1: 7f53e56a5cc429cf6f784937cb90a2580512c85d
 
 Package: rmarkdown
 Source: CRAN
-Version: 1.5
-Hash: b37fc27c2604de97b4981eeae7a00879
+Version: 1.6
+Hash: 40f4034a7b8e28edc2b384bdb0c4d537
 
 Package: roxygen2
 Source: CRAN

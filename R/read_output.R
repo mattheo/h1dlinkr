@@ -8,51 +8,38 @@ extr_col_names <- function(string) {
   string %>%
     str_trim() %>%
     str_split("\\s+", simplify = TRUE) %>%
-    str_to_lower() %>%
-    str_replace("\\(", "_") %>%
+    # str_to_lower() %>%
+    str_replace("\\(|\\/", "_") %>%
     str_replace("\\)", "")
 }
 
-#' @param file_path
-#' Path to *.out file
+#' @param path
+#' Path to Output directory
 #' @param skip
 #' skip number of lines on input
 #' @return data.frame
 #' @export
 #' @rdname read_output
-read_output <- function(file_path, skip = 0) {
-  lines <- readr::read_lines(file_path, skip)
+read_t_level <- function(path, skip = 6) {
+  file_path = file.path(as.character(path), "T_Level.out")
+  t_level_lines <- readr::read_lines(file_path, skip)
 
   readr::read_table(
     file = file_path,
-    col_names = extr_col_names(lines[1]),
+    col_names = extr_col_names(t_level_lines[1]),
     skip = skip + 3, # The first 3 lines are the header
     col_types = readr::cols(.default = "d"),
-    n_max = length(lines) - 4 # exclude header and last line
+    n_max = sum(str_count(t_level_lines, "^ +\\d+"))
   )
 }
 
-
-#' @param path
-#' Path to Output directory
-#' @param skip
-#' Skip number of lines on input
-#' @return data.frame
-#' @export
-#' @rdname read_output
-read_t_level <- function(path) {
-  read_output(file.path(path, "T_Level.out"), skip = 6)
-}
-
-#' @param path
-#' Path to Output directory
 #' @return list of data.frames
 #' @export
 #' @rdname read_output
 read_nod_inf <- function(path) {
   file_path <- file.path(path, "Nod_Inf.out")
   nod_inf_lines <- readr::read_lines(file_path)
-  col_names <- extr_col_names(nod_inf_lines[11])
+  col_names <- extr_col_names(nod_inf_lines[11]) # first column unnecessary
 
   pattern <- "^[ \\t]*Time:\\s+"
   time_stamp <-
@@ -61,25 +48,25 @@ read_nod_inf <- function(path) {
     as.double()
 
   skip <- str_which(nod_inf_lines, pattern) + 5
-  n_max <- str_which(nod_inf_lines, "^end") - skip - 1
+  n_max <- (str_which(nod_inf_lines, "^end") - skip - 1)[1]
 
-  block_list <- list()
-  for (i in seq_along(skip)) {
-    block_list[[i]] <-
+  blocks <- array(dim = c(n_max, length(col_names),length(time_stamp)),
+                  dimnames = list(NULL, col_names, time_stamp))
+  for (i in seq_along(time_stamp)) {
+    blocks[, , i] <-
       readr::read_table(
         file = file_path,
         col_types = readr::cols(.default = "d"),
         col_names = col_names,
         skip = skip[i],
-        n_max = n_max[i]
-      )
+        n_max = n_max
+      ) %>%
+      as.matrix()
   }
-  attr(block_list, "time") <- time_stamp
-  return(block_list)
+  dimnames(blocks) <-
+  aperm(blocks, c(3, 1, 2))
 }
 
-#' @param path
-#' Path to Output directory
 #' @param header
 #' Number of lines with header information before the actual data
 #'
