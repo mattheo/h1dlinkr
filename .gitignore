@@ -1,4 +1,5 @@
 packrat/lib*/
 packrat/src/
+tests/testthat/data/*
 .Rproj.user
 .Rhistory

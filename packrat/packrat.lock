@@ -1,6 +1,6 @@
 PackratFormat: 1.4
 PackratVersion: 0.4.8.20
-RVersion: 3.4.0
+RVersion: 3.4.1
 Repos: CRAN=https://cran.rstudio.com/,
     CRANextra=http://www.stats.ox.ac.uk/pub/RWin
 
@@ -11,8 +11,8 @@ Hash: 14dfb3e8ffe20996118306ff4de1fab2
 
 Package: DBI
 Source: CRAN
-Version: 0.6-1
-Hash: 4aef5bda70897c1663d5b8bae2f4419a
+Version: 0.7
+Hash: 1ab72df487f06ad5f0de05446cdd4bd6
 
 Package: R6
 Source: CRAN
@@ -51,8 +51,8 @@ Hash: e3a02070cf705d3ad1c5af1635a515a3
 
 Package: bindrcpp
 Source: CRAN
-Version: 0.1
-Hash: 11b0937a09c0eae22da142702c7cf1e9
+Version: 0.2
+Hash: f5f300f6180e097c7ce174ef3c6307a6
 
 Package: bitops
 Source: CRAN
@@ -73,15 +73,6 @@ Package: caTools
 Source: CRAN
 Version: 1.17.1
 Hash: 97cb6f6293cd18d17df77a6383cc6763
-
-Package: callr
-Source: github
-Version: 1.0.0.9000
-Hash: cdc4353aec02c0d42682df817c840af3
-GithubRepo: callr
-GithubUsername: r-pkgs
-GithubRef: HEAD
-GithubSha1: 7c65427ac466f91f09202774eb3e643bc79cbf79
 
 Package: cellranger
 Source: CRAN
@@ -135,8 +126,8 @@ Hash: e53fb8c58673df868183697e39a6a4d6
 
 Package: dplyr
 Source: CRAN
-Version: 0.7.0
-Hash: cc5586f018f942d4c85f3be9b112563d
+Version: 0.7.1
+Hash: 160bc6cc8d861967782cd3fa86287615
 
 Package: evaluate
 Source: CRAN
@@ -175,8 +166,8 @@ Hash: 4fb9da27e782921bb175dc2ad3c98679
 
 Package: glue
 Source: CRAN
-Version: 1.1.0
-Hash: 60734a419552f14d9c8246307ccb26bd
+Version: 1.1.1
+Hash: dfd5a27768175ae51d08dc6beba1ef11
 
 Package: gtable
 Source: CRAN
@@ -286,34 +277,16 @@ Hash: 5f4711e142a44655dfea4d64fcf2f641
 Package: packrat
 Source: github
 Version: 0.4.8-20
-Hash: 64a1d4369ec06cb51a9d0adad70f3437
+Hash: 9eea184b58bebff15b4c2589d8f1f701
 GithubRepo: packrat
 GithubUsername: rstudio
 GithubRef: master
-GithubSha1: 51c4b8dd8aca83d0ba44a1ad77a19b4e01d32e58
-
-Package: pkgbuild
-Source: github
-Version: 0.0.0.9000
-Hash: 0240738ba54f63281313d51faee40fc2
-GithubRepo: pkgbuild
-GithubUsername: r-pkgs
-GithubRef: master
-GithubSha1: 8aab60b03bb09212881e3544e332d60defc52fd6
+GithubSha1: 49abeeac2ff3e0c7a198259da3068546266591ed
 
 Package: pkgconfig
 Source: CRAN
 Version: 2.0.1
 Hash: 0dda4a2654a22b36a715c2b0b6fbacac
-
-Package: pkgload
-Source: github
-Version: 0.0.0.9000
-Hash: 8dbbe64b0174aa71740459bed47680f4
-GithubRepo: pkgload
-GithubUsername: r-pkgs
-GithubRef: master
-GithubSha1: 119cf9a667abc97c6f4a19148ce7b324e8de676d
 
 Package: plogr
 Source: CRAN
@@ -370,13 +343,9 @@ Version: 1.4.2
 Hash: 01fa9a6b3ead377e4fac84af9f982df9
 
 Package: rlang
-Source: github
-Version: 0.1.1.9000
-Hash: 6168dedcf8198845025cf7e356d883e8
-GithubRepo: rlang
-GithubUsername: hadley
-GithubRef: master
-GithubSha1: 7f53e56a5cc429cf6f784937cb90a2580512c85d
+Source: CRAN
+Version: 0.1.1
+Hash: 86c53487ce7f82f0a7cc11c816060910
 
 Package: rmarkdown
 Source: CRAN

@@ -62,8 +62,9 @@ read_nod_inf <- function(path) {
         n_max = n_max
       ) %>%
       as.matrix()
+    # colnames(blocks[, , i]) <-
   }
-  dimnames(blocks) <-
+  # dimnames(blocks) <-
   aperm(blocks, c(3, 1, 2))
 }
 

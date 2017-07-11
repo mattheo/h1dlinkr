@@ -2,3 +2,4 @@
 ^\.Rprofile$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^R/run_h1d\.R$
