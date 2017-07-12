@@ -2,7 +2,11 @@
 
 export(read_nod_inf)
 export(read_obs_node)
+export(read_stdout)
 export(read_t_level)
+export(run_h1d)
+export(write_input)
 import(magrittr)
 import(stringr)
 import(tibble)
+import(utils)
