@@ -12,6 +12,13 @@ datetime_frac_days <- function(d) {
 copy_table <- function(obj, size = 4096, col.names = FALSE, row.names = FALSE, ...) {
   clip <- paste('clipboard-', size, sep = '')
   f <- file(description = clip, open = 'w')
-  write.table(obj, f, row.names = row.names, col.names = col.names, sep = '\t', ...)
+  write.table(obj, f, row.names = row.names, col.names = col.names, ...)
   close(f)
 }
+
+split_along <- function(arr, n) {
+  split(arr, arrayInd(seq_along(arr), dim(arr))[, n]) %>%
+    lapply(array, dim = dim(arr)[-n], dimnames(arr)[-n]) %>%
+    setNames(dimnames(arr)[[n]])
+}
+
