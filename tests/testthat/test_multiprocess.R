@@ -1,36 +1,82 @@
 library(future)
+library(doParallel)
 
-runit <- function() {
-  h1d_exec <- "C:/Program Files (x86)/PC-Progress/Hydrus-1D 4.xx/H1D_CALC.EXE"
-  proj_template <- dir("../Hydrus-1D/Projects/nonlinear/nonlinear/", full.names = TRUE)
-
-  futures <- list()
-  for(j in 1:10) {
-    futures[[j]] <- future({
-      current <- file.path("./tests/testthat/data/nonlinear", formatC(j, width = 3, flag = 0))
-      dir.create(current, recursive = TRUE)
-      file.copy(proj_template, current)
-      out <- run_h1d(h1d_exec, current)
-    })
-  }
-  repeat {
-    Sys.sleep(0.1)
-    if(all(resolved(futures))) {
-      print("done")
-      break
+run_par <- function(runs, template, threads) {
+  plan(multiprocess, workers = threads)
+  # threads <- length(cl)
+  fs <- list()
+  for(j in seq_len(runs)) {
+    cat("create future", j, "\n")
+    # print(system.time(
+    fs[[j]] <- future(
+      {
+        current <- file.path("./tests/testthat/data/mp", formatC(j, width = 3, flag = 0))
+        unlink(current, recursive = TRUE, force = TRUE)
+        dir.create(current, recursive = TRUE)
+        file.copy(template, current)
+        h1dlinkr::run_h1d(current)
+        # Sys.sleep(5)
+        # Sys.getpid()
+      }
+    )
+    # ))
+    # the first few workers can be started without checking if they are finished
+    if(j < threads) next
+    repeat {
+      # cat(system.time({x <- resolved(fs)})["elapsed"])
+      cat(".")
+      if (sum(!resolved(fs)) < threads) {
+        cat("\nnext future\n")
+        break
+      }
+      cat("-")
     }
   }
-  values(futures)
+  values(fs)
 }
 
-plan(multiprocess)
-for (i in 1:10){
-  print(system.time(outcome <- runit()))
+run_serial <- function(runs, template) {
+  out <- list()
+  for(j in seq_len(runs)) {
+    current <- file.path("./tests/testthat/data/mp", formatC(j, width = 3, flag = 0))
+    unlink(current, recursive = TRUE, force = TRUE)
+    dir.create(current, recursive = TRUE)
+    file.copy(template, current)
+    out[[j]] <- h1dlinkr::run_h1d(current)
+  }
+  unlink("./tests/testthat/data/mp", recursive = T, force = T)
+  return(out)
 }
-# microbenchmark::microbenchmark(print(system.time(outcome <- runit())), times = 5L)
 
-plan(sequential)
-for (i in 1:10) {
-  print(system.time(outcome <- runit()))
+run_foreach <- function(runs, template) {
+  out <- foreach(j = icount(runs)) %dopar% {
+    current <- file.path("./tests/testthat/data/mp", formatC(j, width = 3, flag = 0))
+    unlink(current, recursive = TRUE, force = TRUE)
+    dir.create(current, recursive = TRUE)
+    file.copy(template, current)
+    h1dlinkr::run_h1d(current)
+  }
+  unlink("./tests/testthat/data/mp", recursive = T, force = T)
+  return(out)
 }
-# microbenchmark::microbenchmark(print(system.time(outcome <- runit())), times = 5L)
+
+proj_template <- dir("./tests/testthat/data/ga_l3_fit_100ET3L/", full.names = TRUE)
+# serial <- system.time(a <- run_serial(10, proj_template))
+
+parl <- system.time(b <- run_par(20, proj_template, threads = 4))
+
+cl <- parallel::makeCluster(4)
+registerDoParallel(cl)
+doParallel <- system.time(c <- run_foreach(20, proj_template))
+parallel::stopCluster(cl)
+#
+# print(serial)
+# print(sapply(a, attr, which = "runtime"))
+print(parl)
+print(sum(sapply(b, attr, which = "runtime")))
+# print(sapply(b, attr, which = "runtime"))
+print(doParallel)
+print(sum(sapply(c, attr, which = "runtime")))
+#
+
+unlink("./tests/testthat/data/mp", recursive = T, force = T)
