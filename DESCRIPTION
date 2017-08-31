@@ -4,7 +4,7 @@ Title: R Interface for HYDRUS-1D
 Version: 0.0.0.9000
 Author: Matthias Theobald [aut, cre]
 Maintainer: Matthias Theobald <m.theo@posteo.de>
-Description: Setup, run and parse HYDRUS-1D from insode R.
+Description: Setup, run and parse HYDRUS-1D from inside R.
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true
