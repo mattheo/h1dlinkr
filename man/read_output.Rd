@@ -3,12 +3,17 @@
 \name{read_output}
 \alias{read_output}
 \alias{read_t_level}
+\alias{read_a_level}
 \alias{read_nod_inf}
 \alias{read_obs_node}
 \alias{read_stdout}
-\title{Read from HYDRUS-1D output files}
+\title{Read HYDRUS-1D output files into R}
 \usage{
+read_output(path = ".")
+
 read_t_level(file_path, skip = 6)
+
+read_a_level(file_path, skip = 2)
 
 read_nod_inf(file_path)
 
@@ -17,6 +22,8 @@ read_obs_node(file_path, header = 11)
 read_stdout(file_path)
 }
 \arguments{
+\item{path}{}
+
 \item{file_path}{Path to T_level output file}
 
 \item{skip}{skip number of lines on input}
@@ -24,6 +31,10 @@ read_stdout(file_path)
 \item{header}{Number of lines with header information before the actual data}
 }
 \value{
+list of data frames
+
+data.frame
+
 data.frame
 
 list of data.frames
@@ -33,5 +44,5 @@ data.frame
 data.frame
 }
 \description{
-Read from HYDRUS-1D output files
+Read HYDRUS-1D output files into R
 }
