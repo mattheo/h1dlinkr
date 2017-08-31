@@ -4,12 +4,12 @@
 \alias{run_h1d}
 \title{Execute H1D from within R}
 \usage{
-run_h1d(h1d_exec, project_path)
+run_h1d(project, h1d_exec = "h1d_calc", async = FALSE)
 }
 \arguments{
-\item{h1d_exec}{Path to H1D_CALC executable}
+\item{project}{Path to HYDRUS project folder}
 
-\item{project_path}{Path to HYDRUS project folder}
+\item{h1d_exec}{Path to H1D_CALC executable}
 }
 \value{
 list
