@@ -2,7 +2,7 @@ library(h1dlinkr)
 
 context("Parse HYDRUS output")
 
-path <- file.path("./data/ga_l3_fit_100ET3L/")
+path <- file.path("./data/SA_test/")
 list.files(path, pattern = "\\.out")
 
 t_level <- read_t_level(file.path(path, "T_level.out"))
@@ -14,7 +14,8 @@ nod_inf <- read_nod_inf(file.path(path, "Nod_Inf.out"))
 obs_node <- read_obs_node(file.path(path, "Obs_Node.out"))
 balance <- read_balance(file.path(path, "Balance.out"))
 run_stdout <- read_stdout(file.path(path, "run.out"))
+output <- read_output(path)
 
-microbenchmark::microbenchmark(
-  output <- read_output(path)
-)
+# microbenchmark::microbenchmark(
+#   output <- read_output(path)
+# )
