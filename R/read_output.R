@@ -17,13 +17,17 @@ extr_col_names <- function(string) {
 #' @name read_output
 read_output <- function(path = ".") {
   files <- list.files(path, full.names = T)
-  structure(list(
-    t_level = read_t_level(str_subset(files, "(?i)t_Level")),
-    a_level = read_a_level(str_subset(files, "(?i)a_Level")),
-    nod_inf = read_nod_inf(str_subset(files, "(?i)nod_inf")),
-    obs_node = read_obs_node(str_subset(files, "(?i)obs_node"))
-    # stdout = read_stdout(str_subset(files, "(?i)run.out"))
-  ), class = "h1d_output")
+  structure(
+    list(
+      t_level = read_t_level(str_subset(files, "(?i)t_Level")),
+      a_level = read_a_level(str_subset(files, "(?i)a_Level")),
+      nod_inf = read_nod_inf(str_subset(files, "(?i)nod_inf")),
+      obs_node = read_obs_node(str_subset(files, "(?i)obs_node"))
+      # stdout = read_stdout(str_subset(files, "(?i)run.out"))
+    ),
+    class = "h1d_output",
+    path = path
+  )
 }
 
 #' @param file_path
@@ -102,14 +106,7 @@ read_obs_node <- function(file_path, header = 11) {
     str_subset(obs_node_header, "^[ ]*time") %>%
     extr_col_names() %>%
     unique()
-  if (length(col_names) == 0) return(NULL)
-
-  nodes <-
-    str_subset(obs_node_header, pattern = "Node") %>%
-    str_extract_all(pattern = "[0-9]+", simplify = TRUE) %>%
-    as.integer()
-
-  par_per_node <- length(col_names) - 1
+  if (length(col_names) == 0) stop("No columns found.")
 
   data <-
     read_table(
@@ -119,13 +116,20 @@ read_obs_node <- function(file_path, header = 11) {
       col_types = cols(.default = "d")
     )
 
-  out <- lapply(seq_along(nodes), function(i) {
-    node <- data[c(1, ((i - 1) * par_per_node + 2):(i * par_per_node + 1))]
-    colnames(node) <- col_names
-    node["node"] <- nodes[i]
-    return(node)
-  }) %>%
-    {do.call("rbind", .)}
+  nodes <-
+    str_subset(obs_node_header, pattern = "Node") %>%
+    str_extract_all(pattern = "[0-9]+", simplify = TRUE) %>%
+    as.integer()
+  par_per_node <- length(col_names) - 1
+  out <- lapply(
+    seq_along(nodes),
+    function(i) {
+      node <- data[c(1, ((i - 1) * par_per_node + 2):(i * par_per_node + 1))]
+      colnames(node) <- col_names
+      node["node"] <- nodes[i]
+      return(node)
+    })
+  do.call(rbind, out)
 }
 
 read_balance <- function(file_path) {
