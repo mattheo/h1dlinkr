@@ -3,3 +3,4 @@ packrat/src/
 data/*
 .Rproj.user
 .Rhistory
+inst/doc
