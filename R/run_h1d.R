@@ -10,21 +10,19 @@
 #'
 run_h1d <- function(project, h1d_exec = "h1d_calc", async = FALSE) {
   project <- file.path(project)
-  out <- file.path(project, "run.out")
-  if (file.exists(out)) unlink(out, force = TRUE)
+  run.out <- file.path(project, "run.out")
   if (async) {
-    return(processx::process$new(h1d_exec, project, stdout = out, stderr = out))
+    return(processx::process$new(h1d_exec, project, stdout = "|", stderr = "|"))
   }
   runtime <- system.time(
-    system2(h1d_exec, project, stdout = out, stderr = out)
+    system2(h1d_exec, project, stdout = run.out, stderr = run.out)
   )
-  run_stdout <- read_file(out)
+  run <- read_lines(run.out)
   structure(
-    read_output(project),
+    run,
+    success = str_detect(tail(run, 1), "Calculations have finished successfully."),
     path = project,
-    success = str_detect(run_stdout, "Calculations have finished successfully."),
     runtime = as.double(runtime["elapsed"]),
-    pid = Sys.getpid(),
-    stdout = run_stdout
+    pid = Sys.getpid()
   )
 }
