@@ -474,15 +474,22 @@ Requires: R6, crayon, digest, magrittr, praise
 
 Package: tibble
 Source: CRAN
-Version: 1.3.3
-Hash: 6a18f6da2887d2c4c4a6554027161483
+Version: 1.3.4
+Hash: 3111e0d62502af60fe0fa8b4213fedad
 Requires: Rcpp, rlang
 
 Package: tidyr
 Source: CRAN
-Version: 0.6.3
-Hash: ab001782aeb1a20618d240e91188d23a
-Requires: Rcpp, dplyr, lazyeval, magrittr, stringi, tibble
+Version: 0.7.0
+Hash: 2a57379324a1f6ba921f53481dcf9e2c
+Requires: Rcpp, dplyr, glue, magrittr, purrr, rlang, stringi, tibble,
+    tidyselect
+
+Package: tidyselect
+Source: CRAN
+Version: 0.1.1
+Hash: b4a923c118b74d3e7ab54563b32d4ed9
+Requires: Rcpp, glue, rlang
 
 Package: tidyverse
 Source: CRAN
@@ -491,6 +498,11 @@ Hash: 72d5fada870c90b835bbdfc281283c99
 Requires: broom, dplyr, forcats, ggplot2, haven, hms, httr, jsonlite,
     lubridate, magrittr, modelr, purrr, readr, readxl, rvest, stringr,
     tibble, tidyr, xml2
+
+Package: viridisLite
+Source: CRAN
+Version: 0.2.0
+Hash: 10f0c25af3dc84eaae10f5854f47efdb
 
 Package: whisker
 Source: CRAN
