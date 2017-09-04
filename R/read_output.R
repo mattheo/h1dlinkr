@@ -135,26 +135,32 @@ read_obs_node <- function(file_path, header = 11) {
 read_balance <- function(file_path) {
   balance_lines <- read_lines(file_path)
   time_idx <- str_which(balance_lines, "^[ \\t]*Time\\s+")
-  slice_idx <- sapply(time_idx, `+`, 4:9) %>% as.numeric()
+  slice_idx <- sapply(time_idx, `+`, 4:11) %>% as.numeric()
   time_stamp <-
     balance_lines[time_idx] %>%
     str_extract("[0-9]+\\.?[0-9]*") %>%
     as.double()
   col_names <-
-    balance_lines[time_idx[1] + 4:9] %>%
+    balance_lines[time_idx[1] + 4:11] %>%
     str_sub(end = 19) %>%
-    str_trim()
+    str_replace("\\[.*\\]", "") %>%
+    str_replace_all("\\s+", "")
   values <- str_sub(balance_lines[slice_idx], start = 20) %>% paste0(collapse = "\n")
-  values_df <-
+  df <-
     read_table(
       values,
       col_types = cols(.default = "d"),
       col_names = FALSE
-    ) %>%
+    )
+  n_regions <- ncol(df)
+  out <-
+    df %>%
     unlist(use.names = FALSE) %>%
-    matrix(ncol = length(col_names), dimnames = list(NULL, col_names), byrow = TRUE)
-
-
+    matrix(ncol = length(col_names), dimnames = list(NULL, col_names), byrow = TRUE) %>%
+    as_tibble()
+  out["Time"] <- rep.int(time_stamp, n_regions)
+  out["Region"] <- rep(seq.int(0, n_regions - 1), each = length(time_stamp))
+  out[c(ncol(out) - 1, ncol(out), 1:(ncol(out) - 2))]
 }
 
 #' @return data.frame
