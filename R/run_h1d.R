@@ -23,6 +23,25 @@ run_h1d <- function(project, h1d_exec = "h1d_calc", async = FALSE) {
     success = str_detect(tail(run, 1), "Calculations have finished successfully."),
     path = project,
     runtime = as.double(runtime["elapsed"]),
-    pid = Sys.getpid()
+    pid = Sys.getpid(),
+    class = c("h1d_run")
   )
+}
+
+
+#' Pretty print HYDRUS runs
+#'
+#' @param x
+#' object of class h1d_run
+#' @export
+#'
+print.h1d_run <- function(x) {
+  if (attr(x, "success")) {
+    cat(sprintf("Successful run finished in %.2f seconds.", attr(x, "runtime")), "\n")
+  } else {
+    cat(sprintf("Unsucessful run stopped after %f seconds."), "\n")
+  }
+  cat(sprintf("Project directory: %s", attr(x, "path")), "\n")
+  writeLines(x[28:40])
+  cat("...\n")
 }
