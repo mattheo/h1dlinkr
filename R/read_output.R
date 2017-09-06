@@ -10,23 +10,37 @@ extr_col_names <- function(string) {
 
 #' Read HYDRUS-1D output files into R
 #'
-#' @param path
+#' @param project Either a h1d_run object or a path to a file (single string)
 #'
 #' @return list of data frames
 #' @export
 #' @name read_output
-read_output <- function(path = ".") {
-  files <- list.files(path, full.names = T)
+read_output <- function(project = ".") {
+  project_attr <- attributes(project)
+  if ("h1d_run" %in% class(project)) {
+    path <- project_attr$path
+  } else {
+    path <- file.path(project[1L])
+  }
+  stopifnot(!is.null(path))
+  files <- list.files(path, full.names = TRUE)
+  out <- list(
+    t_level = read_t_level(str_subset(files, "(?i)t_Level")),
+    a_level = read_a_level(str_subset(files, "(?i)a_Level")),
+    nod_inf = read_nod_inf(str_subset(files, "(?i)nod_inf")),
+    obs_node = read_obs_node(str_subset(files, "(?i)obs_node")),
+    balance = read_balance(str_subset(files, "(?i)balance"))
+    # stdout = ifelse("h1d_run" %in% class(project),
+                    # as.vector(project),
+                    # read_stdout(str_subset(files, "(?i)run.out")))
+  )
   structure(
-    list(
-      t_level = read_t_level(str_subset(files, "(?i)t_Level")),
-      a_level = read_a_level(str_subset(files, "(?i)a_Level")),
-      nod_inf = read_nod_inf(str_subset(files, "(?i)nod_inf")),
-      obs_node = read_obs_node(str_subset(files, "(?i)obs_node"))
-      # stdout = read_stdout(str_subset(files, "(?i)run.out"))
-    ),
-    class = "h1d_output",
-    path = path
+    out,
+    success = project_attr$success,
+    path = path,
+    runtime = project_attr$runtime,
+    pid = project_attr$pid,
+    class = c("h1d_output")
   )
 }
 

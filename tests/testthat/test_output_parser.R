@@ -16,6 +16,7 @@ balance <- read_balance(file.path(path, "Balance.out"))
 run_stdout <- read_stdout(file.path(path, "run.out"))
 output <- read_output(path)
 
+output_run <- read_output(run_h1d(path))
 # microbenchmark::microbenchmark(
 #   output <- read_output(path)
 # )
