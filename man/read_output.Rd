@@ -9,7 +9,7 @@
 \alias{read_stdout}
 \title{Read HYDRUS-1D output files into R}
 \usage{
-read_output(path = ".")
+read_output(project = ".")
 
 read_t_level(file_path, skip = 6)
 
@@ -22,7 +22,7 @@ read_obs_node(file_path, header = 11)
 read_stdout(file_path)
 }
 \arguments{
-\item{path}{}
+\item{project}{Either a h1d_run object or a path to a file (single string)}
 
 \item{file_path}{Path to T_level output file}
 
