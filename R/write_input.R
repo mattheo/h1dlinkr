@@ -4,9 +4,10 @@
 #' @import magrittr
 #' @export
 #'
-write_input <- function(template, project_folder) {
-  if (!dir.exists(project_folder)) dir.create(current, recursive = TRUE)
-  file.copy(template, project_folder)
+write_input <- function(path, options) {
+  if (dir.exists(path)) unlink(path, recursive = TRUE, force = TRUE)
+  dir.create(path, recursive = TRUE)
+  file.copy(dir(options, full.names = T), to = path, recursive = TRUE)
 }
 
 # helper function for writing sections of data to file
@@ -37,8 +38,8 @@ write_section <- function(..., sep = "    ", con) {
 #'
 write_selector <- function(
   path,
-  file_version = 4L,
-  opt = list(
+  ...,
+  options = list(
     # Block A Basic Inforamtion
     Head = "run from R",
     # units
@@ -78,20 +79,20 @@ write_selector <- function(
     )
 
   ),
-  ...
+  file_version = 4L
 ) {
-  # replace further options that have been supplied at function call
-  param <- list(...)
-  opt[names(param)] <- param
+  # insert options that have been supplied at function call
+  params <- list(...)
+  options[names(params)] <- params
   # Dummy value is always false
-  opt$lDummy <- FALSE
+  options$lDummy <- FALSE
   # calculate TPrint if missing
-  if (any(is.na(opt$TPrint))) {
-    round(seq(opt$tInit, opt$tMax, length.out = opt$MPL), digits = 3)
+  if (any(is.na(options$TPrint))) {
+    round(seq(options$tInit, options$tMax, length.out = options$MPL), digits = 3)
   }
   # replace TRUE and FALSE in the options list with "t" and "f"
-  opt[sapply(opt, isTRUE)] <- "t"
-  opt[sapply(opt, function(x) identical(x, FALSE))] <- "f"
+  options[sapply(options, isTRUE)] <- "t"
+  options[sapply(options, function(x) identical(x, FALSE))] <- "f"
 
   # open file connection
   file_path <- file.path(file.path(path), "SELECTOR.IN")
@@ -103,49 +104,49 @@ write_selector <- function(
     paste0("Pcp_File_Version=", file_version),
     # BLOCK A
     "*** BLOCK A: BASIC INFORMATION *****************************************",
-    opt["Head"],
+    options["Head"],
     # units
-    "LUnit TUnit MUnit (indicated units are obligatory for all input opt)",
-    opt[["LUnit"]],
-    opt[["TUnit"]],
-    opt[["MUnit"]],
-    opt[c("lWat", "lChem", "lTemp", "lSink", "lRoot", "lShort", "lWDep",
+    "LUnit TUnit MUnit (indicated units are obligatory for all input options)",
+    options[["LUnit"]],
+    options[["TUnit"]],
+    options[["MUnit"]],
+    options[c("lWat", "lChem", "lTemp", "lSink", "lRoot", "lShort", "lWDep",
         "lScreen", "lVariabBC", "lEquil", "lDummy")],
-    opt[c("lSnow", "lDummy", "lMeteo", "lVapor", "lActRSU", "lFlux",
+    options[c("lSnow", "lDummy", "lMeteo", "lVapor", "lActRSU", "lFlux",
         "lDummy", "lIsotope", "lDummy", "lDummy")],
-    opt[c("NMat", "NLay", "CosAlf")],
+    options[c("NMat", "NLay", "CosAlf")],
     con = f
   )
   # BLOCK B
   write_section(
     "*** BLOCK B: WATER FLOW INFORMATION ************************************",
-    opt[c("MaxIt", "TolTh", "TolTh")],
-    opt[c("TopInF", "WLayer", "KodTop", "lInitW")],
-    opt[c("BotInF", "qGWLF", "FreeD", "SeepF", "KodBot", "qDrain", "hSeep")],
+    options[c("MaxIt", "TolTh", "TolTh")],
+    options[c("TopInF", "WLayer", "KodTop", "lInitW")],
+    options[c("BotInF", "qGWLF", "FreeD", "SeepF", "KodBot", "qDrain", "hSeep")],
     con = f
   )
   # 4th section material information
   write_section(
-    opt[c("hTab1", "hTabN")],
-    opt[c("iModel", "iHyst")],
-    ifelse(opt$iHyst > 0, opt["iKappa"], NA),
-    opt$hydraulics,
+    options[c("hTab1", "hTabN")],
+    options[c("iModel", "iHyst")],
+    ifelse(options$iHyst > 0, options["iKappa"], NA),
+    options$hydraulics,
     con = f
   )
   # BLOCK C
   write_section(
     "*** BLOCK C: TIME INFORMATION ******************************************",
-    opt[c("dt", "dtMin", "dtMax", "dMul", "dMul2", "ItMin", "ItMax", "MPL")],
-    opt[c("tInit", "tMax")],
-    opt[c("lPrintD", "nPrStep", "tPrintInt", "lEnter")],
+    options[c("dt", "dtMin", "dtMax", "dMul", "dMul2", "ItMin", "ItMax", "MPL")],
+    options[c("tInit", "tMax")],
+    options[c("lPrintD", "nPrStep", "tPrintInt", "lEnter")],
     "TPrint(1),TPrint(2),...,TPrint(MPL)",
-    opt$TPrint,
+    options$TPrint,
     con = f
   )
   # BLOCK E
   write_section(
     "*** BLOCK E: HEAT TRANSPORT INFORMATION ********************************",
-    opt$heat,
+    options$heat,
     con = f
   )
 
