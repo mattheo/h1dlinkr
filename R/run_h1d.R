@@ -9,11 +9,12 @@
 #' @export
 #'
 run_h1d <- function(project, h1d_exec = "h1d_calc", async = FALSE) {
-  project <- file.path(project)
-  run.out <- file.path(project, "run.out")
   if (async) {
     return(processx::process$new(h1d_exec, project, stdout = "|", stderr = "|"))
   }
+  project <- path.expand(project)
+  run.out <- file.path(project, "run.out")
+  # file.create(run.out)
   runtime <- system.time(
     system2(h1d_exec, project, stdout = run.out, stderr = run.out)
   )
@@ -39,9 +40,10 @@ print.h1d_run <- function(x) {
   if (attr(x, "success")) {
     cat(sprintf("Successful run finished in %.2f seconds.", attr(x, "runtime")), "\n")
   } else {
-    cat(sprintf("Unsucessful run stopped after %f seconds."), "\n")
+    cat(sprintf("Unsucessful run stopped after %.2f seconds.", attr(x, "runtime")), "\n")
   }
   cat(sprintf("Project directory: %s", attr(x, "path")), "\n")
-  writeLines(x[28:40])
+
+  writeLines(x[seq(from = grep("^\\s+Time", x)[1], length.out = 12)])
   cat("...\n")
 }
