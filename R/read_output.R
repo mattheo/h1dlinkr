@@ -10,23 +10,23 @@ extr_col_names <- function(string) {
 
 #' Read HYDRUS-1D output files into R
 #'
-#' @param project Either a h1d_run object or a path to a file (single string)
+#' @param project
+#' Either a h1d_run object or a path to a file (single string)
 #'
 #' @return list of data frames
 #' @export
-#' @name read_output
 read_output <- function(project = ".") {
-  project_attr <- attributes(project)
-  if ("h1d_run" %in% class(project)) {
-    path <- project_attr$path
-  } else {
-    path <- file.path(project[1L])
-  }
-  stopifnot(!is.null(path))
-  files <- list.files(path, full.names = TRUE)
+  UseMethod("read_output")
+}
+
+#' @export
+read_output.default <- function(project = ".") {
+  files <- list.files(file.path(project), full.names = TRUE) %>%
+    str_subset("((?i)t_level|(?i)a_level|(?i)nod_inf|(?i)obs_node|(?i)balance)")
+  stopifnot(length(files) == 5L)
   out <- list(
-    t_level = read_t_level(str_subset(files, "(?i)t_Level")),
-    a_level = read_a_level(str_subset(files, "(?i)a_Level")),
+    t_level = read_t_level(str_subset(files, "(?i)t_level")),
+    a_level = read_a_level(str_subset(files, "(?i)a_level")),
     nod_inf = read_nod_inf(str_subset(files, "(?i)nod_inf")),
     obs_node = read_obs_node(str_subset(files, "(?i)obs_node")),
     balance = read_balance(str_subset(files, "(?i)balance"))
@@ -36,11 +36,22 @@ read_output <- function(project = ".") {
   )
   structure(
     out,
-    success = project_attr$success,
-    path = path,
-    runtime = project_attr$runtime,
-    pid = project_attr$pid,
-    class = c("h1d_output")
+    path = file.path(project),
+    class = "h1d_output"
+  )
+}
+
+#' @export
+read_output.h1d_run <- function(h1d_run) {
+  do.call(
+    structure,
+    c(
+      attributes(h1d_run),
+      list(
+        .Data = read_output(attr(h1d_run, "path")),
+        class = "h1d_output"
+      )
+    )
   )
 }
 
@@ -121,20 +132,18 @@ read_obs_node <- function(file_path, header = 11) {
     extr_col_names() %>%
     unique()
   if (length(col_names) == 0) stop("No columns found.")
-
-  data <-
-    read_table(
-      file = file_path,
-      skip = header,
-      col_names = FALSE,
-      col_types = cols(.default = "d")
-    )
-
   nodes <-
     str_subset(obs_node_header, pattern = "Node") %>%
     str_extract_all(pattern = "[0-9]+", simplify = TRUE) %>%
     as.integer()
   par_per_node <- length(col_names) - 1
+  data <-
+    read_table(
+      file = file_path,
+      skip = header,
+      col_names = FALSE,
+      col_types = cols(.default = col_number())
+    )
   out <- lapply(
     seq_along(nodes),
     function(i) {
