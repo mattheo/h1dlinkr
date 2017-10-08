@@ -4,7 +4,7 @@
 \alias{write_input}
 \title{Write HYDRUS input files}
 \usage{
-write_input(path, options)
+write_input(path, parameters)
 }
 \value{
 None

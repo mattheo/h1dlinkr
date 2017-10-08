@@ -4,150 +4,152 @@
 #' @import magrittr
 #' @export
 #'
-write_input <- function(path, options) {
+write_input <- function(path, parameters) {
   if (dir.exists(path)) unlink(path, recursive = TRUE, force = TRUE)
   dir.create(path, recursive = TRUE)
-  file.copy(dir(options, full.names = T), to = path, recursive = TRUE)
+  file.copy(dir(parameters, full.names = T), to = path, recursive = TRUE)
 }
 
 # helper function for writing sections of data to file
-write_section <- function(..., sep = "    ", con) {
+write_section <- function(..., con) {
   x <- list(...)
+  # EXTREMELY HACKY!
+  # used to create fixed width data fields in the file
+  # redirect stdout to the specified conncetion
+  # sink(file = con, append = TRUE, type = "output")
   for (el in x) {
-    if (all(is.null(el)) | all(is.na(el))) next
-    if (is.null(names(el))) {
-      writeLines(paste(el, collapse = sep), con = con)
-    } else {
-      writeLines(
-        c(
-          paste(names(el), collapse = sep),
-          paste(el, collapse = sep)
-        ),
-        con = con
-      )
-    }
+    # if (all(is.null(el)) || all(is.na(el))) next
+    # replace TRUE and FALSE in the pars list with "t" and "f"
+    el[sapply(el, isTRUE)] <- "t"
+    el[sapply(el, function(x) identical(x, FALSE))] <- "f"
+
+    suppressWarnings(
+      write.table(el, file = con, append = TRUE, quote = FALSE, sep = "    ",
+                  row.names = FALSE, col.names = !is.null(names(el)))
+    )
+    # if (is.null(names(el))) {
+    #   writeLines(paste0(el, collapse = "    "), con = con)
+    # } else {
+    #   # print(as.data.frame(el), quote = FALSE, row.names = FALSE)
+    #   writeLines(
+    #     c(
+    #       paste(names(el), collapse = "    "),
+    #       paste(el, collapse = "    ")
+    #     ),
+    #     con = con
+    #   )
+    # }
   }
+  # if (con != stdout ()) sink(NULL)
 }
 
 #' Write file SELECTOR.IN for HYDRUS-1D
 #'
-#' @param path
-#'
-#' @return NULL
+#' @param folder
+#' Path to folder where SELECTOR.IN should be created. If missing, the
+#' function writes to stdout.
+#' @param pars
+#' List of parameters
+#' @param ...
+#' Additional parmaters
+#' @return
+#' Listt of parameters
 #' @export
 #'
-write_selector <- function(
-  path,
-  ...,
-  options = list(
-    # Block A Basic Inforamtion
-    Head = "run from R",
-    # units
-    LUnit = "cm", TUnit = "days", MUnit = "mmol",
-    # 1st section
-    lWat = TRUE, lChem = TRUE, lTemp = TRUE, lSink = TRUE, lRoot = FALSE,
-    lShort = FALSE, lWDep = FALSE, lScreen = TRUE, lVariabBC = TRUE,
-    lEquil = TRUE,
-    # 2nd section
-    lSnow = TRUE, lMeteo = FALSE, lVapor = FALSE,
-    lActRSU = FALSE, lFlux = FALSE, lIsotope = FALSE,
-    # 3rd section
-    NMat = 1, NLay = 1, CosAlf = 1,
-    # Block B Water Flow Information
-    # 1st section
-    MaxIt = 20, TolTh = 0.001, TolH = 1,
-    # 2nd section
-    TopInF = TRUE, WLayer = TRUE, KodTop = -1, lInitW = FALSE,
-    # 3rd section
-    BotInF = FALSE, qGWLF = FALSE, FreeD = TRUE, SeepF = FALSE, KodBot = -1,
-    qDrain = FALSE, hSeep = 0,
-    # 4th section material
-    hTab1 = 1e-6, hTabN = 1e6,
-    iModel = 0, iHyst = 0,
-    iKappa = 1,
-    hydraulics = data.frame(
-      thr = 0.08, ths = 0.45, Alfa = 0.036, n = 1.56, Ks = 25, l = 0.5
-    ),
-    # Block C Time Information
-    dt = 0.01, dtMin = 1e-07, dtMax = 1, dMul = 1.3, dMul2 = 0.7, ItMin = 3, ItMax = 7, MPL = 10,
-    tInit = 0, tMax = 1, TPrint = NA,
-    lPrintD = TRUE, nPrStep = 1, tPrintInt = 1, lEnter = FALSE,
-    # Block E Heat Transport
-    heat = data.frame(
-      Qn = 0.4, Qo = 0, Disper = 5, B1 = 1.47054e+016, B2 = -1.5518e+017,
-      B3 = 3.16617e+017, Cn = 1.43327e+014, Co = 1.8737e+014, Cw = 3.12035e+014
-    )
-
-  ),
-  file_version = 4L
-) {
-  # insert options that have been supplied at function call
-  params <- list(...)
-  options[names(params)] <- params
-  # Dummy value is always false
-  options$lDummy <- FALSE
+write_selector <- function(pars = list(), folder, ...) {
+  # insert paramters that have been supplied at function call
+  par_dots <- list(...)
+  pars[names(par_dots)] <- par_dots
   # calculate TPrint if missing
-  if (any(is.na(options$TPrint))) {
-    round(seq(options$tInit, options$tMax, length.out = options$MPL), digits = 3)
-  }
-  # replace TRUE and FALSE in the options list with "t" and "f"
-  options[sapply(options, isTRUE)] <- "t"
-  options[sapply(options, function(x) identical(x, FALSE))] <- "f"
-
+  pars$TPrint <-
+    if (is.null(pars$TPrint)) {
+      with(
+        pars,
+        seq(tInit, tMax, length.out = MPL) %>%
+          round(digits = (nchar(MPL) - 1)/ nchar(tMax))
+      )
+    } else pars$TPrint
+  # Dummy value is always false
+  pars$lDummy <- FALSE
   # open file connection
-  file_path <- file.path(file.path(path), "SELECTOR.IN")
-  f <- file(file_path, open = "w", encoding = "UTF-8")
-  on.exit(close(f))
+  if (missing(folder) || is.null(folder)) {
+    con <- stdout()
+  } else {
+    file_path <- file.path(file.path(folder), "SELECTOR.IN")
+    con <- file(file_path, open = "w", encoding = "UTF-8")
+    on.exit(close(con))
+  }
 
   # write to file
   write_section(
-    paste0("Pcp_File_Version=", file_version),
-    # BLOCK A
+    paste0("Pcp_File_Version=", pars$file_version),
     "*** BLOCK A: BASIC INFORMATION *****************************************",
-    options["Head"],
-    # units
+    pars["Head"],
     "LUnit TUnit MUnit (indicated units are obligatory for all input options)",
-    options[["LUnit"]],
-    options[["TUnit"]],
-    options[["MUnit"]],
-    options[c("lWat", "lChem", "lTemp", "lSink", "lRoot", "lShort", "lWDep",
-        "lScreen", "lVariabBC", "lEquil", "lDummy")],
-    options[c("lSnow", "lDummy", "lMeteo", "lVapor", "lActRSU", "lFlux",
-        "lDummy", "lIsotope", "lDummy", "lDummy")],
-    options[c("NMat", "NLay", "CosAlf")],
-    con = f
+    pars[["LUnit"]],
+    pars[["TUnit"]],
+    pars[["MUnit"]],
+    pars[c("lWat", "lChem", "lTemp", "lSink", "lRoot", "lShort", "lWDep",
+              "lScreen", "lVariabBC", "lEquil", "lInverse")],
+    pars[c("lSnow", "lHP1", "lMeteo", "lVapor", "lActiveU", "lFluxes",
+              "lIrrig", "lIsotope", "lDummy", "lDummy")],
+    pars[c("NMat", "NLay", "CosAlpha")],
+    con = con
   )
-  # BLOCK B
   write_section(
     "*** BLOCK B: WATER FLOW INFORMATION ************************************",
-    options[c("MaxIt", "TolTh", "TolTh")],
-    options[c("TopInF", "WLayer", "KodTop", "lInitW")],
-    options[c("BotInF", "qGWLF", "FreeD", "SeepF", "KodBot", "qDrain", "hSeep")],
-    con = f
+    pars[c("MaxIt", "TolTh", "TolH")],
+    pars[c("TopInF", "WLayer", "KodTop", "InitCond")],
+    pars[c("BotInF", "qGWLF", "FreeD", "SeepF", "KodBot", "qDrainF", "hSeep")],
+    pars[c("hTab1", "hTabN")],
+    pars[c("Model", "Hysteresis")],
+    pars[["hydraulics"]],
+    con = con
   )
-  # 4th section material information
-  write_section(
-    options[c("hTab1", "hTabN")],
-    options[c("iModel", "iHyst")],
-    ifelse(options$iHyst > 0, options["iKappa"], NA),
-    options$hydraulics,
-    con = f
-  )
-  # BLOCK C
   write_section(
     "*** BLOCK C: TIME INFORMATION ******************************************",
-    options[c("dt", "dtMin", "dtMax", "dMul", "dMul2", "ItMin", "ItMax", "MPL")],
-    options[c("tInit", "tMax")],
-    options[c("lPrintD", "nPrStep", "tPrintInt", "lEnter")],
+    pars[c("dt", "dtMin", "dtMax", "dMul", "dMul2", "ItMin", "ItMax", "MPL")],
+    pars[c("tInit", "tMax")],
+    pars[c("lPrintD", "nPrintSteps", "tPrintInterval", "lEnter")],
     "TPrint(1),TPrint(2),...,TPrint(MPL)",
-    options$TPrint,
-    con = f
+    pars[["TPrint"]],
+    con = con
   )
-  # BLOCK E
   write_section(
     "*** BLOCK E: HEAT TRANSPORT INFORMATION ********************************",
-    options$heat,
-    con = f
+    pars[["heat"]],
+    pars[c("tAmpl", "tPeriod", "Campbell", "MeltConst", "lSnowInit", "lDummy",
+           "lDummy", "lDummy", "lDummy")],
+    pars[c("MeltConst", "SublimConst", "InitSnow")],
+    pars[c("kTopT", "TTop", "kBotT", "TBot")],
+    con = con
   )
-
+  write_section(
+    "*** BLOCK F: SOLUTE TRANSPORT INFORMATION ******************************",
+    pars[c("Epsi", "lUpW", "lArtD", "lTDep", "cTolA", "cTolR", "MaxItC",
+              "PeCr", "No.Solutes", "lTort", "iBacter", "lFiltr", "nChPar")],
+    pars[c("iNonEqul", "lWatDep", "lDualNEq", "lInitM", "lInitEq", "lTortA",
+              "lDummy", "lDummy", "lDummy", "lDummy", "lDummy")],
+    pars[["solute"]],
+    pars[["diffusivity"]],
+    pars[["reaction"]],
+    pars[c("kTopSolute", "SolTop", "kBotSolute", "SolBot")],
+    pars[c("tPulse")],
+    con = con
+  )
+  write_section(
+    "*** BLOCK G: ROOT WATER UPTAKE INFORMATION *****************************",
+    pars[c("iModSink", "cRootMax", "OmegaC")],
+    pars[c("P0", "P2H", "P2L", "P3", "r2H", "r2L")],
+    "POptm(1),POptm(2),...,POptm(NMat)",
+    pars[["POptm"]],
+    pars["lOmegaW"],
+    con = con
+  )
+  writeLines(
+    "*** END OF INPUT FILE 'SELECTOR.IN' ************************************",
+    con = con
+  )
+  invisible(pars)
 }
+
