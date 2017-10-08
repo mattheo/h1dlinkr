@@ -4,7 +4,7 @@
 \alias{run_h1d}
 \title{Execute H1D from within R}
 \usage{
-run_h1d(project, h1d_exec = "h1d_calc", async = FALSE)
+run_h1d(project, h1d_exec = "h1d_calc")
 }
 \arguments{
 \item{project}{Path to HYDRUS project folder}

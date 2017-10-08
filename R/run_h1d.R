@@ -8,12 +8,9 @@
 #' @return list
 #' @export
 #'
-run_h1d <- function(project, h1d_exec = "h1d_calc", async = FALSE) {
-  if (async) {
-    return(processx::process$new(h1d_exec, project, stdout = "|", stderr = "|"))
-  }
+run_h1d <- function(project, h1d_exec = "h1d_calc") {
   project <- path.expand(project)
-  run.out <- file.path(project, "run.out")
+  run.out <- file.path(project, "RUN.OUT")
   # file.create(run.out)
   runtime <- system.time(
     system2(h1d_exec, project, stdout = run.out, stderr = run.out)
@@ -21,7 +18,8 @@ run_h1d <- function(project, h1d_exec = "h1d_calc", async = FALSE) {
   run <- read_lines(run.out)
   structure(
     run,
-    success = str_detect(tail(run, 1), "Calculations have finished successfully."),
+    success = any(str_detect(run, "Calculations have finished successfully.")),
+    # warnings = warnings(),
     path = project,
     runtime = as.double(runtime["elapsed"]),
     pid = Sys.getpid(),

@@ -14,18 +14,5 @@ system.time({
     }
   }
 })
+print(out2)
 print(attr(out2, "runtime"))
-
-system.time({
-  run <- run_h1d(project, async = TRUE)
-  repeat {
-    Sys.sleep(0.001)
-    if (!run$is_alive()) {
-      break
-    }
-  }
-})
-run$read_all_output()
-
-
-
