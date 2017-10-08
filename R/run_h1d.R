@@ -35,13 +35,16 @@ run_h1d <- function(project, h1d_exec = "h1d_calc") {
 #' @export
 #'
 print.h1d_run <- function(x) {
+  cat(sprintf("Project directory: %s \n", attr(x, "path")))
   if (attr(x, "success")) {
-    cat(sprintf("Successful run finished in %.2f seconds.", attr(x, "runtime")), "\n")
+    cat(sprintf("Successful run finished in %.2f seconds. \n\n", attr(x, "runtime")))
   } else {
     cat(sprintf("Unsucessful run stopped after %.2f seconds.", attr(x, "runtime")), "\n")
   }
-  cat(sprintf("Project directory: %s", attr(x, "path")), "\n")
-
-  writeLines(x[seq(from = grep("^\\s+Time", x)[1], length.out = 12)])
-  cat("...\n")
+  # this is where the actual output begins
+  begin <- grep("^\\s+Time", x)[1]
+  writeLines(x[seq(from = begin, length.out = 6)])
+  if (length(x[-(1:begin)]) > 13) cat("\n...\n\n")
+  writeLines(tail(x, 7))
+  # if(!is.null(attr(x, "warnings"))) print(attr(x, "warnings"))
 }
