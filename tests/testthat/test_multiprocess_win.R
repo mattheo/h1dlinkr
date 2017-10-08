@@ -1,8 +1,9 @@
 library(future)
+library(listenv)
 library(doParallel)
 
 run_future <- function(runs, options, folder, conjunct = FALSE) {
-  fs <- list()
+  fs <- listenv()
   for(j in seq_len(runs)) {
     cat(paste("\nStarting future", j), "\n")
     fs[[j]] <-
@@ -18,6 +19,8 @@ run_future <- function(runs, options, folder, conjunct = FALSE) {
           # read output of run
           h1dlinkr::read_output(run)
         },
+
+        lazy = conjunct,
         globals = list(id = j,
                        options = options,
                        folder = folder)
@@ -35,7 +38,7 @@ run_future <- function(runs, options, folder, conjunct = FALSE) {
       }
     }
   }
-  fs
+  invisible(fs)
 }
 
 # h1d_future <- function(id, options, folder, ...) {
@@ -70,7 +73,7 @@ run_future <- function(runs, options, folder, conjunct = FALSE) {
 # }
 
 run_foreach <- function(runs, options, folder) {
-  foreach(j = icount(runs)) %dopar% {
+  foreach(id = icount(runs)) %dopar% {
     # create new project folder
     path <- file.path(folder, sprintf("h1d_run_%05.f", id))
     # write HYDRUS input files to the directory
@@ -88,21 +91,22 @@ tmpfolder <- function(length = 20, pattern = "[a-zA-Z0-9]") {
 }
 
 
-cl <- parallel::makeForkCluster()
-project <- "~/Studium/Master Thesis/h1dlinkr/data/SA_test"
+project <- "~/Studium/Master Thesis/h1dlinkr/data/ga_l3_fit_100ET3L/"
 
+cl <- parallel::makeCluster(4L)
 plan(cluster, workers = cl)
-multi_future <- system.time(b <- run_future(20, project, tmpfolder(), conjunct = TRUE))
-b <- values(b)
+multi_future <- system.time(b <- run_future(20, project, tmpfolder(), conjunct = F))
+b <- as.list(values(b))
+print(object.size(b), unit = "Mb")
 
 registerDoParallel(cl)
-doParallel <- system.time(c <- run_foreach(20, project, tmpfolder()))
+multi_foreach <- system.time(c <- run_foreach(20, project, tmpfolder()))
 
 print(multi_future)
 print(sum(sapply(b, attr, which = "runtime")))
 print(sapply(b, attr, which = "runtime"))
 
-print(doParallel)
+print(multi_foreach)
 print(sum(sapply(c, attr, which = "runtime")))
 print(sapply(c, attr, which = "runtime"))
 
