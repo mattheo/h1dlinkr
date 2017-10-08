@@ -1,7 +1,8 @@
 
-project <- file.path("./data/SA_test")
-system.time(out1 <- run_h1d(project))
-print(attr(out1, "runtime"))
+project <- file.path("./data/ga_l3_fit_100ET3L/")
+out1 <- run_h1d(project)
+print(out1)
+run_h1d("data/SA_test/")
 
 library(future)
 plan(multiprocess)
