@@ -1,6 +1,6 @@
 PackratFormat: 1.4
 PackratVersion: 0.4.8.41
-RVersion: 3.4.1
+RVersion: 3.4.2
 Repos: CRAN=https://cran.rstudio.com/,
     CRANextra=http://www.stats.ox.ac.uk/pub/RWin
 
@@ -355,16 +355,6 @@ Package: praise
 Source: CRAN
 Version: 1.0.0
 Hash: 77da8f1df873a4b91e5c4a68fe2fb1b6
-
-Package: processx
-Source: github
-Version: 2.1.0
-Hash: 53d3c0555d3a7cb8095ae21f197a15ae
-Requires: R6, assertthat, crayon, debugme
-GithubRepo: processx
-GithubUsername: r-lib
-GithubRef: master
-GithubSha1: 124030a369c86538e980f9671b436048aae9ef77
 
 Package: profvis
 Source: CRAN
