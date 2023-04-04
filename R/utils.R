@@ -16,9 +16,8 @@ copy_table <- function(obj, size = 4096, col.names = FALSE, row.names = FALSE, .
   close(f)
 }
 
-split_along <- function(arr, n) {
-  split(arr, arrayInd(seq_along(arr), dim(arr))[, n]) %>%
-    lapply(array, dim = dim(arr)[-n], dimnames(arr)[-n]) %>%
-    setNames(dimnames(arr)[[n]])
+refine_grid <- function(grid, where, by) {
+  section <- grid[grid >= where[1] & grid <= where[2]]
+  refined <- diff(section) / by + head(section, -1)
+  sort(c(refined, grid))
 }
-

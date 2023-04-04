@@ -2,13 +2,13 @@
 % Please edit documentation in R/run_h1d.R
 \name{print.h1d_run}
 \alias{print.h1d_run}
-\title{Pretty print HYDRUS runs}
+\title{Print h1d_run objects}
 \usage{
-\method{print}{h1d_run}(x)
+\method{print}{h1d_run}(h1d_run)
 }
 \arguments{
 \item{x}{object of class h1d_run}
 }
 \description{
-Pretty print HYDRUS runs
+Print h1d_run objects
 }

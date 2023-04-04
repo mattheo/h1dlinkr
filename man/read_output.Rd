@@ -6,20 +6,17 @@
 \alias{read_a_level}
 \alias{read_nod_inf}
 \alias{read_obs_node}
-\alias{read_stdout}
 \title{Read HYDRUS-1D output files into R}
 \usage{
-read_output(project = ".")
+read_output(project, ...)
 
-read_t_level(file_path, skip = 6)
+read_t_level(file_path, skip = 6L)
 
-read_a_level(file_path, skip = 2)
+read_a_level(file_path, skip = 2L)
 
-read_nod_inf(file_path)
+read_nod_inf(file_path, colnames_row = 11L)
 
-read_obs_node(file_path, header = 11)
-
-read_stdout(file_path)
+read_obs_node(file_path, header = 11L)
 }
 \arguments{
 \item{project}{Either a h1d_run object or a path to a file (single string)}
@@ -38,8 +35,6 @@ data.frame
 data.frame
 
 list of data.frames
-
-data.frame
 
 data.frame
 }

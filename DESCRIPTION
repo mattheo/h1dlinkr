@@ -8,9 +8,7 @@ Description: Setup, run and parse HYDRUS-1D from inside R.
 License: file LICENSE
 Encoding: UTF-8
 LazyData: true
-Suggests: testthat,
-    knitr,
-    rmarkdown
-Imports: magrittr, lubridate, readr, stringr, tibble
+Suggests: testthat, knitr, rmarkdown, roxygen2, devtools
+Imports: magrittr, lubridate, readr, stringr, tibble, iterators
 RoxygenNote: 6.0.1
 VignetteBuilder: knitr

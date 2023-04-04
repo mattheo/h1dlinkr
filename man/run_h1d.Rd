@@ -2,18 +2,28 @@
 % Please edit documentation in R/run_h1d.R
 \name{run_h1d}
 \alias{run_h1d}
-\title{Execute H1D from within R}
+\alias{run_h1d.default}
+\alias{run_h1d.h1d_project}
+\title{Execute HYDRUS 1D from within R}
 \usage{
-run_h1d(project, h1d_exec = "h1d_calc")
+run_h1d(project, h1d_exec = "h1d_calc", timeout)
+
+\method{run_h1d}{default}(project = ".", h1d_exec = "h1d_calc",
+  timeout = NULL)
+
+\method{run_h1d}{h1d_project}(project, h1d_exec = "h1d_calc",
+  timeout = NULL)
 }
 \arguments{
 \item{project}{Path to HYDRUS project folder}
 
 \item{h1d_exec}{Path to H1D_CALC executable}
+
+\item{timeout}{Time in seconds after which the run is terminated}
 }
 \value{
 list
 }
 \description{
-Execute H1D from within R
+Execute HYDRUS 1D from within R
 }

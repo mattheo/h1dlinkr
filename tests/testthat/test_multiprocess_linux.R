@@ -20,7 +20,7 @@ cat(
 library(future)
 library(doParallel)
 
-run_future <- function(runs, options, folder, conjunct = FALSE) {
+run_future <- function(runs, options, folder, lazy = FALSE, sleep = 0.01) {
   fs <- list()
   for (j in seq_len(runs)) {
     # cat(paste("Starting future", j), "\n")
@@ -35,34 +35,29 @@ run_future <- function(runs, options, folder, conjunct = FALSE) {
           run <- h1dlinkr::run_h1d(path)
           # Sys.sleep(stats::rnorm(1, mean = 5, sd = 1))
           # read output of run
-          h1dlinkr::read_output(run)
+          output <- h1dlinkr::read_output(run)
+          saveRDS(output, file = paste0(path, ".rds"))
+          rm(output)
+          gc()
+          run
         },
+        lazy = lazy,
         globals = list(
           id = j,
           options = options,
           folder = folder
         )
       )
-    if (conjunct | j < nbrOfWorkers()) {
+    if (lazy | j < nbrOfWorkers()) {
       next
     }
-    while (sum(!resolved(fs)) >= nbrOfWorkers()) Sys.sleep(0.01)
-    # repeat {
-    #   Sys.sleep(0.01)
-    #   # print(system.time(
-    #   # x <- resolved(fs)
-    #   # ))
-    #   if (sum(!resolved(fs)) < nbrOfWorkers()) {
-    #     # cat(paste(sum(!x), "unresolved futures"), "\n")
-    #     break
-    #   }
-    # }
+    while (sum(!resolved(fs)) >= nbrOfWorkers()) Sys.sleep(sleep)
   }
-  fs
+  resolve(fs)
 }
 
 run_foreach <- function(runs, options, folder) {
-  foreach(j = icount(runs)) %dopar% {
+  foreach(id = icount(runs)) %dopar% {
     # create new project folder
     path <- file.path(folder, sprintf("h1d_run_%05.f", id))
     # write HYDRUS input files to the directory
@@ -71,7 +66,11 @@ run_foreach <- function(runs, options, folder) {
     run <- h1dlinkr::run_h1d(path)
     # Sys.sleep(stats::rnorm(1, mean = 5, sd = 1))
     # read output of run
-    h1dlinkr::read_output(run)
+    output <- h1dlinkr::read_output(run)
+    saveRDS(output, file = paste0(path, ".rds"))
+    rm(output)
+    gc()
+    TRUE
   }
 }
 
@@ -79,14 +78,15 @@ tmpfolder <- function(length = 20, pattern = "[a-zA-Z0-9]") {
   file.path(Sys.getenv("TMP"), stringi::stri_rand_strings(1, length = length, pattern))
 }
 
-tmp <- tmpfolder()
+tmp <- file.path(Sys.getenv("TMP"), "hydrus")
 cat(tmp, sep = "\n")
 
-threads <- ifelse(
-                  nchar(Sys.getenv("MOAB_PROCCOUNT")) == 0,
-                  parallel::detectCores()/2,
-                  length(max(1, as.numeric(Sys.getenv("MOAB_PROCCOUNT")) - 1))
-                  )
+threads <-
+  ifelse(
+    nchar(Sys.getenv("MOAB_PROCCOUNT")) == 0,
+    parallel::detectCores() - 1,
+    length(max(1, as.numeric(Sys.getenv("MOAB_PROCCOUNT")) * 2 - 1))
+  )
 print(cl <- parallel::makeForkCluster(threads))
 on.exit(parallel::stopCluster(cl))
 
@@ -96,8 +96,8 @@ multi_future_async <- system.time(a <- run_future(runs, project, tmp, conjunct =
 
 # multi_future <- system.time(b <- run_future(runs, project, tmp, conjunct = TRUE))
 
-# registerDoParallel(cl)
-# multi_foreach <- system.time(c <- run_foreach(runs, project, tmp))
+registerDoParallel(cl)
+multi_foreach <- system.time(c <- run_foreach(runs, project, tmp))
 
 cat("\n",
   "Runtime multi_future_async",

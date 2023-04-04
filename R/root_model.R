@@ -7,14 +7,13 @@ root_hoffmann <- function(L, Lr) {
   y
 }
 
-# logistic model for root distribution
-root_logistic <- function(n, location, scale) {
-  seq(0, 1, length.out = n) %>%
-    plogis(location = location/n, scale = scale/n, lower.tail = FALSE) %>%
-    round(digits = 3)
+root_logistic <- function(x, location = 10, scale = 5) {
+  scaledx <- (x - min(x))/diff(range(x))
+  round(plogis(sort(scaledx), location = location/length(x), scale = scale/length(x), lower.tail = FALSE), 3)
 }
 
-root_gale <- function(n, beta) {
-  y <- -beta^(seq.int(0, n)) * log(beta)
-  round((y - min(y)) / (max(y) - min(y)), 3)
+root_gale <- function(x, beta) {
+  y <- -beta^sort(abs(x)) * log(beta)
+  round((y - min(y)) / diff(range(y)), 3)
 }
+

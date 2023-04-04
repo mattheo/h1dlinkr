@@ -4,18 +4,18 @@
 \alias{write_selector}
 \title{Write file SELECTOR.IN for HYDRUS-1D}
 \usage{
-write_selector(pars = list(), folder, ...)
+write_selector(pars, path = ".", file_name = "SELECTOR.IN")
 }
 \arguments{
 \item{pars}{List of parameters}
 
-\item{folder}{Path to folder where SELECTOR.IN should be created. If missing, the
+\item{path}{Path to folder where SELECTOR.IN should be created. If missing, the
 function writes to stdout.}
 
-\item{...}{Additional parmaters}
+\item{file_name}{Name of file}
 }
 \value{
-Listt of parameters
+List of parameters
 }
 \description{
 Write file SELECTOR.IN for HYDRUS-1D
